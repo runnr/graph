@@ -57,7 +57,9 @@ class Edge extends require("events") {
 					// Allow all routes included in "routes" for this instance:
 					root: routes,
 					// Allow all routes for child objects of this instance:
-					deep: true
+					deep(route) {
+						return this.value.hasOwnProperty(route);
+					}
 				})
 			},
 			closer: {

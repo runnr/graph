@@ -33,7 +33,6 @@ class Graph extends require("events") {
 
 		owe(this, owe.serve({
 			router: {
-				deep: true,
 				filter: new Set([...exposed, "container"])
 			},
 			closer: {
@@ -83,9 +82,6 @@ const operations = {
 
 		return owe(val, owe.chain([
 			owe.serve({
-				router: {
-					deep: true
-				},
 				closer: {
 					filter: true
 				}
