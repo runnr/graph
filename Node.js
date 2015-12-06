@@ -78,15 +78,18 @@ class Node extends require("events") {
 				res.in.add(edge);
 		});
 
-		return res;
+		return {
+			in: [...res.in],
+			out: [...res.out]
+		};
 	}
 
 	get neighbours() {
 		const edges = this.edges;
 
 		return {
-			before: new Set(edges.in.map(edge => edge.fromNode)),
-			after: new Set(edges.out.map(edge => edge.toNode))
+			before: [...new Set(edges.in.map(edge => edge.fromNode))],
+			after: [...new Set(edges.out.map(edge => edge.toNode))]
 		};
 	}
 

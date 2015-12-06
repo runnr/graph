@@ -11,15 +11,12 @@ class PluginNode extends Node {
 		this[Node.routes].add("plugin");
 
 		this.name = preset.name;
-	}
+		this.plugin = plugins.get(this.name);
 
-	get plugin() {
-		const plugin = plugins.get(this.name);
-
-		if(!plugin)
+		if(!this.plugin)
 			throw new owe.exposed.Error(`There is no plugin with the name '${this.name}'.`);
 
-		return plugin;
+		this.plugin.addDependentNode(this);
 	}
 
 	get ports() {
