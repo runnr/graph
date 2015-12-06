@@ -5,15 +5,18 @@ const internalize = require("../helpers/internalize");
 const Node = require("./Node");
 const Edge = require("./Edge");
 
+const container = Symbol("container");
 const nodes = Symbol("nodes");
 const edges = Symbol("edges");
 const update = Symbol("update");
 
 class Graph extends require("events") {
-	constructor(preset) {
+	constructor(preset, parentContainer) {
 		super();
 		Object.assign(this, preset);
 		internalize(this, ["nodes", "edges"]);
+
+		this[container] = parentContainer;
 
 		if(!this.nodes)
 			this.nodes = {};
@@ -31,7 +34,7 @@ class Graph extends require("events") {
 		owe(this, owe.serve({
 			router: {
 				deep: true,
-				filter: new Set(exposed)
+				filter: new Set([...exposed, "container"])
 			},
 			closer: {
 				filter: true
@@ -44,6 +47,10 @@ class Graph extends require("events") {
 		// Emit update to notify this graph's runner, which then sets a dirty mark to trigger DB persistence:
 		this.emit("update");
 		this.emit(type, value);
+	}
+
+	get container() {
+		return this[container];
 	}
 
 	get nodes() {

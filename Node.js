@@ -32,6 +32,7 @@ class Node extends require("events") {
 		const exposed = ["id", "type", "ports", ...preset];
 		const routes = this[oweRoutes] = new Set([
 			...exposed,
+			"graph",
 			"edges",
 			"neighbours",
 			"delete"
@@ -57,6 +58,10 @@ class Node extends require("events") {
 			}
 		}));
 		owe.expose.properties(this, exposed);
+	}
+
+	get graph() {
+		return this[graph];
 	}
 
 	get ports() {
