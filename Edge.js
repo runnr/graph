@@ -15,11 +15,28 @@ class Edge extends require("events") {
 		if(!preset.from || !preset.to || typeof preset.from !== "object" || typeof preset.to !== "object")
 			throw new owe.exposed.TypeError("Edge endpoints have to be objects.");
 
+		if(typeof preset.from.node !== "number" || typeof preset.to.node !== "number")
+			throw new owe.exposed.TypeError("Edge node ids have to be numbers.");
+
+		if(typeof preset.from.port !== "string" || typeof preset.to.port !== "string")
+			throw new owe.exposed.TypeError("Edge ports have to be strings.");
+
 		if(!(preset.from.node in parentGraph.nodes))
 			throw new owe.exposed.Error("Edge start node does not exist.");
 
 		if(!(preset.to.node in parentGraph.nodes))
 			throw new owe.exposed.Error("Edge end node does not exist.");
+
+		if(parentGraph.edges)
+			for(const id of Object.keys(parentGraph.edges)) {
+				const edge = parentGraph.edges[id];
+
+				if(edge.from.node === preset.from.node && edge.from.port === preset.from.port
+					&& edge.to.node === preset.to.node && edge.to.port === preset.to.port)
+					throw Object.assign(new owe.exposed.Error("There already is an edge between the given ports."), {
+						existingEdge: edge.id
+					});
+			}
 
 		super();
 

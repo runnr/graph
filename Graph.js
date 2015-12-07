@@ -72,7 +72,6 @@ class Graph extends require("events") {
 }
 
 const operations = {
-
 	prepareGraphList(graph, type, val) {
 		Object.keys(val).forEach(id => val[id] = operations[`instanciate${type}`](val[id], graph));
 
