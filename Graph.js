@@ -10,7 +10,7 @@ const nodes = Symbol("nodes");
 const edges = Symbol("edges");
 const update = Symbol("update");
 
-class Graph extends require("events") {
+class Graph extends require("../EventEmitter") {
 	constructor(preset, parentContainer) {
 		super();
 		Object.assign(this, preset);

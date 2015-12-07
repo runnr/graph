@@ -4,7 +4,7 @@ const owe = require("owe.js");
 
 const graph = Symbol("graph");
 
-class Edge extends require("events") {
+class Edge extends require("../EventEmitter") {
 	constructor(preset, parentGraph) {
 		if(preset instanceof Edge)
 			return preset;

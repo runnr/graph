@@ -6,7 +6,7 @@ const graph = Symbol("graph");
 const oweRoutes = Symbol("routes");
 const oweWritable = Symbol("writable");
 
-class Node extends require("events") {
+class Node extends require("../EventEmitter") {
 	constructor(preset, parentGraph) {
 		// Node is an abstract class.
 		// If instanciated directly, the intended concrete class will be read from preset.type and instanciated instead:
