@@ -4,7 +4,7 @@ const internalize = require("../helpers/internalize");
 
 const Node = require("./Node");
 
-const plugins = require("../plugins");
+const constraints = require("../helpers/constraints");
 
 const data = Symbol("data");
 const constraint = Symbol("constraint");
@@ -22,7 +22,9 @@ class DataNode extends Node {
 			value: {
 				in: {},
 				out: {
-					data: this.constraint
+					data: {
+						constraint: this.constraint
+					}
 				}
 			}
 		});
@@ -32,19 +34,19 @@ class DataNode extends Node {
 		return this[data];
 	}
 	set data(value) {
-		this[data] = plugins.constraints.match(value, this.constraint);
+		this[data] = constraints.match(value, this.constraint);
 	}
 
 	get constraint() {
 		return this[constraint];
 	}
 	set constraint(value) {
-		this[constraint] = plugins.constraints.validate(value);
+		this[constraint] = constraints.validate(value);
 
 		// Remove data from this DataNode if the new constraint does not allow it:
 		if(data in this)
 			try {
-				plugins.constraints.match(this[data], this[constraint]);
+				constraints.match(this[data], this[constraint]);
 			}
 			catch(err) {
 				this[data] = undefined;
