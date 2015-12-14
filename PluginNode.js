@@ -11,7 +11,11 @@ class PluginNode extends Node {
 		this[Node.routes].add("plugin");
 
 		this.name = preset.name;
-		this.plugin = plugins.get(this.name);
+
+		Object.defineProperty(this, "plugin", {
+			enumerable: false,
+			value: plugins.get(this.name)
+		});
 
 		if(!this.plugin)
 			throw new owe.exposed.Error(`There is no plugin with the name '${this.name}'.`);
