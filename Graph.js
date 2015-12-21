@@ -73,7 +73,7 @@ class Graph extends require("../EventEmitter") {
 
 const operations = {
 	prepareGraphList(graph, type, val) {
-		Object.keys(val).forEach(id => val[id] = operations[`instanciate${type}`](val[id], graph));
+		Object.keys(val).forEach(id => val[id] = operations[`instanciate${type}`](graph, val[id]));
 
 		Object.defineProperty(val, "add", {
 			value: this[`add${type}`].bind(this, graph)
@@ -90,13 +90,13 @@ const operations = {
 		]), "rebind");
 	},
 
-	instanciateNode(node, graph) {
+	instanciateNode(graph, node) {
 		node = node instanceof Node ? node : new Node(node, graph);
 		node.on("delete", this.deleteNode.bind(this, graph, node.id));
 		return node;
 	},
 
-	instanciateEdge(edge, graph) {
+	instanciateEdge(graph, edge) {
 		edge = new Edge(edge, graph);
 		edge.on("delete", this.deleteEdge.bind(this, graph, edge.id));
 		return edge;
