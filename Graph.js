@@ -109,7 +109,8 @@ const operations = {
 		const id = graph.idCount + 1;
 
 		node.id = id;
-		node = graph.nodes[id] = this.instanciateNode(node, graph);
+
+		node = graph.nodes[id] = this.instanciateNode(graph, node);
 		graph.idCount = id;
 
 		graph[update]("addNode", node);
@@ -124,7 +125,7 @@ const operations = {
 		const id = graph.idCount + 1;
 
 		edge.id = id;
-		edge = graph.edges[id] = this.instanciateEdge(edge, graph);
+		edge = graph.edges[id] = this.instanciateEdge(graph, edge);
 		graph.idCount = id;
 
 		graph[update]("addEdge", edge);
