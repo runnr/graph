@@ -7,14 +7,14 @@ const plugins = require("../plugins");
 
 class PluginNode extends Node {
 	constructor(preset, parentGraph) {
-		super(["name"], parentGraph);
+		super(["pluginId"], parentGraph);
 		this[Node.routes].add("plugin");
 
-		this.name = preset.name;
+		this.pluginId = preset.pluginId;
 
 		Object.defineProperty(this, "plugin", {
 			enumerable: false,
-			value: plugins.getByName(this.name)
+			value: plugins.getById(this.pluginId)
 		});
 
 		if(!this.plugin)
