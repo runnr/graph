@@ -14,7 +14,7 @@ class PluginNode extends Node {
 
 		Object.defineProperty(this, "plugin", {
 			enumerable: false,
-			value: plugins.get(this.name)
+			value: plugins.getByName(this.name)
 		});
 
 		if(!this.plugin)
