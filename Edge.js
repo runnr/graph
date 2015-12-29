@@ -2,6 +2,8 @@
 
 const owe = require("owe.js");
 
+const validateEdge = require("./helpers/validateEdge");
+
 const graph = Symbol("graph");
 
 class Edge extends require("../EventEmitter") {
@@ -53,11 +55,8 @@ class Edge extends require("../EventEmitter") {
 			}
 		});
 
-		if(!(this.from.port in this.fromNode.ports.out))
-			throw new owe.exposed.Error(`Edge start node does not offer an output port '${this.from.port}'.`);
-
-		if(!(this.to.port in this.toNode.ports.in))
-			throw new owe.exposed.Error(`Edge end node does not offer an input port '${this.to.port}'.`);
+		// Check if I/O ports exist and that their constraints are compatible:
+		validateEdge(this);
 
 		/* owe binding: */
 
