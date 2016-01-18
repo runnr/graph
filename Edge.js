@@ -76,7 +76,8 @@ class Edge extends require("../EventEmitter") {
 					deep(route) {
 						return this.value.hasOwnProperty(route);
 					}
-				})
+				}),
+				traversePrototype: true // Allow access to Edge.prototype getters
 			},
 			closer: {
 				filter: true

@@ -53,7 +53,8 @@ class Node extends require("../EventEmitter") {
 						return this.value.hasOwnProperty(route);
 					}
 				}),
-				writable: this[oweWritable] = new Set()
+				writable: this[oweWritable] = new Set(),
+				traversePrototype: true // Allow access to Node.prototype getters
 			},
 			closer: {
 				filter: true
