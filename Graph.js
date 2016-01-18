@@ -43,8 +43,10 @@ class Graph extends require("../EventEmitter") {
 	}
 
 	[update](type, value) {
-		// Emit update to notify this graph's runner, which then sets a dirty mark to trigger DB persistence:
+		// Emit "update" to notify this graph's runner, which then sets a dirty mark to trigger DB persistence:
 		this.emit("update");
+
+		// type is emitted to enable UIs / nodes in active runners to listen for concrete graph modifications:
 		this.emit(type, value);
 	}
 
