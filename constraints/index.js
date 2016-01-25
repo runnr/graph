@@ -50,8 +50,6 @@ module.exports = {
 	},
 
 	match(data, constraint) {
-		constraint = this.validate(constraint);
-
 		if(!constraint.some(constraint => checkers[constraint.name](data, constraint.meta)))
 			throw new owe.exposed.Error(`'${data}' does not pass the given constraints.`);
 
