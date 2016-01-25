@@ -4,7 +4,7 @@ const internalize = require("../helpers/internalize");
 
 const Node = require("./Node");
 
-const constraints = require("./helpers/constraints");
+const constraints = require("./constraints");
 
 const data = Symbol("data");
 const constraint = Symbol("constraint");

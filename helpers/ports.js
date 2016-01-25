@@ -2,7 +2,7 @@
 
 const owe = require("owe.js");
 
-const constraints = require("./constraints");
+const constraints = require("../constraints");
 
 module.exports = {
 	validatePort(port, name) {
