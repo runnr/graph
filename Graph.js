@@ -95,12 +95,14 @@ const operations = {
 
 	instanciateNode(graph, node) {
 		node = node instanceof Node ? node : new Node(node, graph);
+		node.on("update", () => graph[update]("updateNode", node));
 		node.on("delete", this.deleteNode.bind(this, graph, node.id));
 		return node;
 	},
 
 	instanciateEdge(graph, edge) {
 		edge = new Edge(edge, graph);
+		edge.on("update", () => graph[update]("updateEdge", edge));
 		edge.on("delete", this.deleteEdge.bind(this, graph, edge.id));
 		return edge;
 	},

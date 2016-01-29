@@ -57,7 +57,8 @@ class Node extends require("../EventEmitter") {
 				traversePrototype: true // Allow access to Node.prototype getters
 			},
 			closer: {
-				filter: true
+				filter: true,
+				writable: true
 			}
 		}));
 		owe.expose.properties(this, exposed);

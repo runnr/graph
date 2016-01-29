@@ -12,21 +12,23 @@ const constraint = Symbol("constraint");
 class DataNode extends Node {
 	constructor(preset, parentGraph) {
 		super(["data", "constraint"], parentGraph);
-		this[Node.writable].add("data", "constraint");
+		this[Node.writable].add("data").add("constraint");
 		internalize(this, ["data", "constraint"]);
 
 		this.constraint = preset.constraint;
-		this.data = preset.data;
+
+		if(preset.data !== undefined)
+			this.data = preset.data;
 
 		Object.defineProperty(this, "ports", {
-			value: {
+			get: () => ({
 				in: {},
 				out: {
 					data: {
 						constraint: this.constraint
 					}
 				}
-			}
+			})
 		});
 	}
 
@@ -35,6 +37,7 @@ class DataNode extends Node {
 	}
 	set data(value) {
 		this[data] = constraints.match(value, this.constraint);
+		this.emit("update");
 	}
 
 	get constraint() {
@@ -51,6 +54,8 @@ class DataNode extends Node {
 			catch(err) {
 				this[data] = undefined;
 			}
+
+		this.emit("update");
 	}
 }
 
