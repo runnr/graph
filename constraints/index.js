@@ -24,7 +24,7 @@ module.exports = {
 				throw new owe.exposed.Error("Empty constraint lists are invalid.");
 
 			return constraint.map(constraint => {
-				if(constraint instanceof Array)
+				if(Array.isArray(constraint))
 					throw new owe.exposed.Error("Nested constraint lists are invalid.");
 
 				return this.validate(constraint)[0];
