@@ -10,9 +10,12 @@ const data = Symbol("data");
 const constraint = Symbol("constraint");
 
 class DataNode extends Node {
-	constructor(preset, parentGraph) {
-		super(["data", "constraint"], parentGraph);
-		this[Node.writable].add("data").add("constraint");
+	constructor(preset) {
+		super();
+		this[Node.expose](["data", "constraint"], {
+			serializable: true,
+			writable: true
+		});
 		internalize(this, ["data", "constraint"]);
 
 		this.constraint = preset.constraint;

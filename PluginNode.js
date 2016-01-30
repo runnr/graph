@@ -6,9 +6,12 @@ const Node = require("./Node");
 const plugins = require("../plugins");
 
 class PluginNode extends Node {
-	constructor(preset, parentGraph) {
-		super(["pluginId"], parentGraph);
-		this[Node.routes].add("plugin");
+	constructor(preset) {
+		super();
+		this[Node.expose]("pluginId", {
+			serializable: true
+		});
+		this[Node.expose]("plugin");
 
 		this.pluginId = preset.pluginId;
 

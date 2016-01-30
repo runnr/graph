@@ -3,8 +3,10 @@
 const owe = require("owe.js");
 
 const graph = Symbol("graph");
+const oweExposed = Symbol("exposed");
 const oweRoutes = Symbol("routes");
 const oweWritable = Symbol("writable");
+const expose = Symbol("expose");
 
 class Node extends require("../EventEmitter") {
 	constructor(preset, parentGraph) {
@@ -17,19 +19,18 @@ class Node extends require("../EventEmitter") {
 			if(!(preset.type in nodeTypes))
 				throw new owe.exposed.Error(`Unknown node type '${preset.type}'.`);
 
-			return Object.assign(new nodeTypes[preset.type](preset, parentGraph), {
+			return Object.assign(new nodeTypes[preset.type](preset), {
 				id: preset.id,
-				type: preset.type
+				type: preset.type,
+				[graph]: parentGraph
 			});
 		}
 
 		super();
 
-		this[graph] = parentGraph;
-
 		/* owe binding: */
 
-		const exposed = ["id", "type", "ports", ...preset];
+		const exposed = this[oweExposed] = ["id", "type", "ports"];
 		const routes = this[oweRoutes] = new Set([
 			...exposed,
 			"graph",
@@ -62,6 +63,19 @@ class Node extends require("../EventEmitter") {
 			}
 		}));
 		owe.expose.properties(this, exposed);
+	}
+
+	[expose](property, options) {
+		if(Array.isArray(property))
+			return property.map(property => this[expose](property, options));
+
+		this[oweRoutes].add(property);
+
+		if(options && options.serializable)
+			this[oweExposed].push(property);
+
+		if(options && options.writable)
+			this[oweWritable].add(property);
 	}
 
 	get graph() {
@@ -112,10 +126,7 @@ class Node extends require("../EventEmitter") {
 	}
 }
 
-Object.assign(Node, {
-	routes: oweRoutes,
-	writable: oweWritable
-});
+Object.assign(Node, { expose });
 
 module.exports = Node;
 
