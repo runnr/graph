@@ -11,6 +11,8 @@ const checkers = {
 	string: require("./checkers/string"),
 	number: require("./checkers/number"),
 	boolean: require("./checkers/boolean"),
+	object: require("./checkers/object"),
+	function: require("./checkers/function"),
 	period: require("./checkers/period"),
 	date: require("./checkers/date"),
 	buffer: require("./checkers/buffer"),
@@ -44,7 +46,7 @@ module.exports = {
 			throw new owe.exposed.Error("Constraint metadata has to be an object.");
 
 		if(!(constraint.name in checkers))
-			throw new owe.exposed.Error(`Invalid constraint '${constraint}'.`);
+			throw new owe.exposed.Error(`Invalid constraint '${constraint.name}'.`);
 
 		return [constraint];
 	},
