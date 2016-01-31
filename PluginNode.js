@@ -24,6 +24,8 @@ class PluginNode extends Node {
 			throw new owe.exposed.Error(`There is no plugin with the name '${this.name}'.`);
 
 		this.plugin.addDependentNode(this);
+
+		this.loaded = this.plugin.loaded;
 	}
 
 	get ports() {

@@ -51,6 +51,10 @@ class Graph extends require("../EventEmitter") {
 		this.emit(type, value);
 	}
 
+	get loaded() {
+		return Promise.all(Object.keys(this[nodes]).map(id => this[nodes][id].loaded)).then(() => true);
+	}
+
 	get container() {
 		return this[container];
 	}
