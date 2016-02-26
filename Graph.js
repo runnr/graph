@@ -2,6 +2,7 @@
 
 const owe = require("owe.js");
 const internalize = require("../helpers/internalize");
+const filterObject = require("../helpers/filterObject");
 const Node = require("./Node");
 const Edge = require("./Edge");
 
@@ -13,7 +14,7 @@ const update = Symbol("update");
 class Graph extends require("../EventEmitter") {
 	constructor(preset, parentContainer) {
 		super();
-		Object.assign(this, preset);
+		Object.assign(this, filterObject(preset, ["nodes", "edges", "idCount"]));
 		internalize(this, ["nodes", "edges"]);
 
 		this[container] = parentContainer;
