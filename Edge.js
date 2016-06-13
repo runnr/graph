@@ -60,21 +60,18 @@ class Edge extends require("../EventEmitter") {
 
 		/* owe binding: */
 
-		const that = this;
 		const exposed = ["id", "from", "to"];
 		const routes = new Set([...exposed, "delete"]);
 
 		owe(this, owe.serve({
 			router: {
 				deep: true,
-				filter: owe.switch(function() {
-					return this.value === that ? "root" : "deep";
-				}, {
+				filter: owe.switch((destination, state) => state.value === this ? "root" : "deep", {
 					// Allow all routes included in "routes" for this instance:
-					root: routes,
+					root: owe.filter(routes),
 					// Allow all routes for child objects of this instance:
-					deep(route) {
-						return this.value.hasOwnProperty(route);
+					deep(destination, state) {
+						return state.value.hasOwnProperty(destination);
 					}
 				}),
 				traversePrototype: true // Allow access to Edge.prototype getters

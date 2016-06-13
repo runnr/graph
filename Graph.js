@@ -34,7 +34,7 @@ class Graph extends require("../EventEmitter") {
 
 		owe(this, owe.serve({
 			router: {
-				filter: new Set([...exposed, "container"]),
+				filter: owe.filter(new Set([...exposed, "container"])),
 				traversePrototype: true // Allow access to Graph.prototype getters
 			},
 			closer: {

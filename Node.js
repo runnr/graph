@@ -39,22 +39,18 @@ class Node extends require("../EventEmitter") {
 			"delete"
 		]);
 
-		const that = this;
-
 		owe(this, owe.serve({
 			router: {
 				deep: true,
-				filter: owe.switch(function() {
-					return this.value === that ? "root" : "deep";
-				}, {
+				filter: owe.switch((destination, state) => state.value === this ? "root" : "deep", {
 					// Allow all routes included in "routes" for this instance:
-					root: routes,
+					root: owe.filter(routes),
 					// Allow all routes for child objects of this instance:
-					deep(route) {
-						return this.value.hasOwnProperty(route);
+					deep(destination, state) {
+						return state.value.hasOwnProperty(destination);
 					}
 				}),
-				writable: this[oweWritable] = new Set(),
+				writable: owe.filter(this[oweWritable] = new Set()),
 				traversePrototype: true // Allow access to Node.prototype getters
 			},
 			closer: {
