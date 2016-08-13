@@ -38,11 +38,13 @@ module.exports = {
 
 		if(typeof constraint !== "object")
 			constraint = {
-				name: constraint,
-				meta: {}
+				name: constraint
 			};
 
-		if(!constraint.meta || typeof constraint.meta !== "object")
+		if(constraint.meta == null)
+			constraint.meta = {};
+
+		if(typeof constraint.meta !== "object")
 			throw new owe.exposed.Error("Constraint metadata has to be an object.");
 
 		if(!(constraint.name in checkers))
