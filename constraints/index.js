@@ -12,11 +12,11 @@ const checkers = {
 	number: require("./checkers/number"),
 	boolean: require("./checkers/boolean"),
 	object: require("./checkers/object"),
-	function: require("./checkers/function"),
 	period: require("./checkers/period"),
 	date: require("./checkers/date"),
 	buffer: require("./checkers/buffer"),
-	file: require("./checkers/file")
+	file: require("./checkers/file"),
+	function: require("./checkers/function")
 };
 
 module.exports = {
