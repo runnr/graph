@@ -1,6 +1,9 @@
 "use strict";
 
 const owe = require("owe.js");
+const { mixins } = require("mixwith");
+
+const EventEmitter = require("../helpers/EventEmitter");
 
 const graph = Symbol("graph");
 const oweExposed = Symbol("exposed");
@@ -8,7 +11,7 @@ const oweRoutes = Symbol("routes");
 const oweWritable = Symbol("writable");
 const expose = Symbol("expose");
 
-class Node extends require("../EventEmitter") {
+class Node extends mixins(EventEmitter) {
 	constructor(preset, parentGraph) {
 		// Node is an abstract class.
 		// If instanciated directly, the intended concrete class will be read from preset.type and instanciated instead:

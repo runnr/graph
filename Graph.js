@@ -1,6 +1,9 @@
 "use strict";
 
 const owe = require("owe.js");
+const { mixins } = require("mixwith");
+
+const EventEmitter = require("../helpers/EventEmitter");
 const internalize = require("../helpers/internalize");
 const filterObject = require("../helpers/filterObject");
 const Node = require("./Node");
@@ -11,7 +14,7 @@ const nodes = Symbol("nodes");
 const edges = Symbol("edges");
 const update = Symbol("update");
 
-class Graph extends require("../EventEmitter") {
+class Graph extends mixins(EventEmitter) {
 	constructor(preset, parentContainer) {
 		super();
 		Object.assign(this, filterObject(preset, ["nodes", "edges", "idCount"]));
