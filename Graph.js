@@ -15,21 +15,16 @@ const edges = Symbol("edges");
 const update = Symbol("update");
 
 class Graph extends mixins(EventEmitter) {
-	constructor(preset, parentContainer) {
+	constructor(parentContainer) {
 		super();
-		Object.assign(this, filterObject(preset, ["nodes", "edges", "idCount"]));
 		internalize(this, ["nodes", "edges"]);
 
-		this[container] = parentContainer;
-
-		if(!this.nodes)
-			this.nodes = {};
-
-		if(!this.edges)
-			this.edges = {};
-
-		if(!this.idCount)
-			this.idCount = 0;
+		Object.assign(this, {
+			[container]: parentContainer,
+			nodes: {},
+			edges: {},
+			idCount: 0
+		});
 
 		/* owe binding: */
 
@@ -45,6 +40,24 @@ class Graph extends mixins(EventEmitter) {
 			}
 		}));
 		owe.expose.properties(this, exposed);
+	}
+
+	assign(preset) {
+		if(!preset)
+			return this;
+
+		Object.assign(this, filterObject(preset, ["nodes", "edges", "idCount"]));
+
+		if(!this.nodes)
+			this.nodes = {};
+
+		if(!this.edges)
+			this.edges = {};
+
+		if(!this.idCount)
+			this.idCount = 0;
+
+		return this;
 	}
 
 	[update](type, value) {
