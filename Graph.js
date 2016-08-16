@@ -21,8 +21,8 @@ class Graph extends mixins(EventEmitter) {
 
 		Object.assign(this, {
 			[container]: parentContainer,
-			nodes: {},
-			edges: {},
+			[nodes]: {},
+			[edges]: {},
 			idCount: 0
 		});
 
