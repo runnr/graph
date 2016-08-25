@@ -3,26 +3,25 @@
 const owe = require("owe.js");
 const { mixins } = require("mixwith");
 
-const EventEmitter = require("../helpers/EventEmitter");
+const UpdateEmitter = require("../helpers/UpdateEmitter");
 const internalize = require("../helpers/internalize");
 const filterObject = require("../helpers/filterObject");
 const Node = require("./Node");
 const Edge = require("./Edge");
 
-const container = Symbol("container");
-const nodes = Symbol("nodes");
-const edges = Symbol("edges");
-const update = Symbol("update");
+const { update, type: updateType } = UpdateEmitter;
 
-class Graph extends mixins(EventEmitter) {
+const container = Symbol("container");
+
+class Graph extends mixins(UpdateEmitter(["nodes", "edges"])) {
 	constructor(parentContainer) {
 		super();
 		internalize(this, ["nodes", "edges"]);
 
 		Object.assign(this, {
 			[container]: parentContainer,
-			[nodes]: {},
-			[edges]: {},
+			nodes: {},
+			edges: {},
 			idCount: 0
 		});
 
@@ -60,16 +59,8 @@ class Graph extends mixins(EventEmitter) {
 		return this;
 	}
 
-	[update](type, value) {
-		// Emit "update" to notify this graph's runner, which then sets a dirty mark to trigger DB persistence:
-		this.emit("update");
-
-		// type is emitted to enable UIs / nodes in active runners to listen for concrete graph modifications:
-		this.emit(type, value);
-	}
-
 	get loaded() {
-		return Promise.all(Object.keys(this[nodes]).map(id => this[nodes][id].loaded)).then(() => true);
+		return Promise.all(Object.keys(this.nodes).map(id => this.nodes[id].loaded)).then(() => true);
 	}
 
 	get container() {
@@ -77,21 +68,17 @@ class Graph extends mixins(EventEmitter) {
 	}
 
 	get nodes() {
-		return this[nodes];
+		return super.nodes;
 	}
 	set nodes(val) {
-		this[nodes] = operations.prepareGraphList(this, "Node", val);
-
-		this[update]("updateNodes");
+		super.nodes = operations.prepareGraphList(this, "Node", val);
 	}
 
 	get edges() {
-		return this[edges];
+		return super.edges;
 	}
 	set edges(val) {
-		this[edges] = operations.prepareGraphList(this, "Edge", val);
-
-		this[update]("updateEdges");
+		super.edges = operations.prepareGraphList(this, "Edge", val);
 	}
 }
 
@@ -116,15 +103,17 @@ const operations = {
 
 	instanciateNode(graph, node) {
 		node = node instanceof Node ? node : new Node(node, graph);
-		node.on("update", () => graph[update]("updateNode", node));
+		node.on("update", () => graph[update](updateType.change("node"), node));
 		node.on("delete", this.deleteNode.bind(this, graph, node.id));
+
 		return node;
 	},
 
 	instanciateEdge(graph, edge) {
 		edge = new Edge(edge, graph);
-		edge.on("update", () => graph[update]("updateEdge", edge));
+		edge.on("update", () => graph[update](updateType.change("edge"), edge));
 		edge.on("delete", this.deleteEdge.bind(this, graph, edge.id));
+
 		return edge;
 	},
 
@@ -139,7 +128,7 @@ const operations = {
 		node = graph.nodes[id] = this.instanciateNode(graph, node);
 		graph.idCount = id;
 
-		graph[update]("addNode", node);
+		graph[update](updateType.add("node"), node);
 
 		return node;
 	},
@@ -154,7 +143,7 @@ const operations = {
 		edge = graph.edges[id] = this.instanciateEdge(graph, edge);
 		graph.idCount = id;
 
-		graph[update]("addEdge", edge);
+		graph[update](updateType.add("edge"), edge);
 
 		return edge;
 	},
@@ -179,7 +168,7 @@ const operations = {
 
 		delete graph.nodes[id];
 
-		graph[update]("deleteNode", id);
+		graph[update](updateType.delete("node"), id);
 	},
 
 	deleteEdge(graph, id) {
@@ -188,7 +177,7 @@ const operations = {
 
 		delete graph.edges[id];
 
-		graph[update]("deleteEdge", id);
+		graph[update](updateType.delete("edge"), id);
 	}
 };
 
