@@ -1,6 +1,7 @@
 "use strict";
 
 const internalize = require("../helpers/internalize");
+const { update, type: updateType } = require("../helpers/UpdateEmitter");
 
 const Node = require("./Node");
 
@@ -40,7 +41,7 @@ class DataNode extends Node {
 	}
 	set data(value) {
 		this[data] = constraints.match(value, this.constraint);
-		this.emit("update");
+		this[update](updateType.change("data"), value);
 	}
 
 	get constraint() {
@@ -58,7 +59,7 @@ class DataNode extends Node {
 				this[data] = undefined;
 			}
 
-		this.emit("update");
+		this[update](updateType.change("constraint"), value);
 	}
 }
 

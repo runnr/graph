@@ -4,13 +4,13 @@ const owe = require("owe.js");
 
 const { mixins } = require("mixwith");
 
-const EventEmitter = require("../helpers/EventEmitter");
+const UpdateEmitter = require("../helpers/UpdateEmitter");
 
 const validateEdge = require("./helpers/validateEdge");
 
 const graph = Symbol("graph");
 
-class Edge extends mixins(EventEmitter) {
+class Edge extends mixins(UpdateEmitter()) {
 	constructor(preset, parentGraph) {
 		if(preset instanceof Edge)
 			return preset;
@@ -96,7 +96,7 @@ class Edge extends mixins(EventEmitter) {
 	}
 
 	delete() {
-		this.emit("delete");
+		this[UpdateEmitter.delete]();
 	}
 }
 
