@@ -1,7 +1,7 @@
 "use strict";
 
 const internalize = require("../helpers/internalize");
-const { update, type: updateType } = require("../helpers/UpdateEmitter");
+const { update, type: updateType } = require("../events/UpdateEmitter");
 
 const Node = require("./Node");
 

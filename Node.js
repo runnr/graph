@@ -3,7 +3,7 @@
 const owe = require("owe.js");
 const { mixins } = require("mixwith");
 
-const UpdateEmitter = require("../helpers/UpdateEmitter");
+const UpdateEmitter = require("../events/UpdateEmitter");
 
 const graph = Symbol("graph");
 const oweExposed = Symbol("exposed");

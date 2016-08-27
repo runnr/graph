@@ -2,7 +2,7 @@
 
 const { Mixin } = require("mixwith");
 
-const UpdateEmitter = require("../helpers/UpdateEmitter");
+const UpdateEmitter = require("../events/UpdateEmitter");
 
 const Graph = require("./Graph");
 
