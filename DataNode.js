@@ -1,16 +1,17 @@
 "use strict";
 
+const { mix } = require("mixwith");
+
 const internalize = require("../helpers/internalize");
-const { update, type: updateType } = require("../events/UpdateEmitter");
+const UpdateEmitter = require("../events/UpdateEmitter");
 
 const Node = require("./Node");
 
 const constraints = require("./constraints");
 
-const data = Symbol("data");
-const constraint = Symbol("constraint");
+const gotData = Symbol("gotData");
 
-class DataNode extends Node {
+class DataNode extends mix(Node).with(UpdateEmitter(["data", "constraint"])) {
 	constructor(preset) {
 		super();
 		this[Node.expose](["data", "constraint"], {
@@ -19,6 +20,7 @@ class DataNode extends Node {
 		});
 		internalize(this, ["data", "constraint"]);
 
+		this[gotData] = false;
 		this.constraint = preset.constraint;
 
 		if(preset.data !== undefined)
@@ -37,29 +39,27 @@ class DataNode extends Node {
 	}
 
 	get data() {
-		return this[data];
+		return super.data;
 	}
 	set data(value) {
-		this[data] = constraints.match(value, this.constraint);
-		this[update](updateType.change("data"), value);
+		super.data = constraints.match(value, this.constraint);
+		this[gotData] = true;
 	}
 
 	get constraint() {
-		return this[constraint];
+		return super.constraint;
 	}
 	set constraint(value) {
-		this[constraint] = constraints.validate(value);
+		super.constraint = constraints.validate(value);
 
 		// Remove data from this DataNode if the new constraint does not allow it:
-		if(data in this)
+		if(this[gotData])
 			try {
-				constraints.match(this[data], this[constraint]);
+				constraints.match(this.data, this.constraint);
 			}
 			catch(err) {
-				this[data] = undefined;
+				this.data = undefined;
 			}
-
-		this[update](updateType.change("constraint"), value);
 	}
 }
 
