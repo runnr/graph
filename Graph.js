@@ -12,9 +12,10 @@ const Edge = require("./Edge");
 const { update, type: updateType } = UpdateEmitter;
 
 const container = Symbol("container");
+const writable = Symbol("writable");
 
 class Graph extends mixins(UpdateEmitter(["nodes", "edges"])) {
-	constructor(parentContainer) {
+	constructor(parentContainer, isWritable = true) {
 		super();
 		internalize(this, ["nodes", "edges"]);
 
@@ -22,12 +23,13 @@ class Graph extends mixins(UpdateEmitter(["nodes", "edges"])) {
 			[container]: parentContainer,
 			nodes: {},
 			edges: {},
-			idCount: 0
+			idCount: 0,
+			[writable]: !!isWritable
 		});
 
 		/* owe binding: */
 
-		const exposed = ["nodes", "edges"];
+		const exposed = ["nodes", "edges", "writable"];
 
 		owe(this, owe.serve({
 			router: {
@@ -67,6 +69,10 @@ class Graph extends mixins(UpdateEmitter(["nodes", "edges"])) {
 		return this[container];
 	}
 
+	get writable() {
+		return this[writable];
+	}
+
 	get nodes() {
 		return super.nodes;
 	}
@@ -87,7 +93,9 @@ const operations = {
 		Object.keys(val).forEach(id => val[id] = operations[`instanciate${type}`](graph, val[id]));
 
 		Object.defineProperty(val, "add", {
-			value: this[`add${type}`].bind(this, graph)
+			value: graph.writable ? preset => this[`add${type}`](graph, preset) : () => {
+				throw new owe.exposed.Error(`The ${type} could not be added because the graph is not writable.`);
+			}
 		});
 
 		return owe(val, owe.chain([
@@ -96,13 +104,13 @@ const operations = {
 					filter: true
 				}
 			}), {
-				router: this[`get${type}`].bind(this, graph)
+				router: id => this[`get${type}`](graph, id)
 			}
 		]), "rebind");
 	},
 
 	instanciateNode(graph, node) {
-		node = node instanceof Node ? node : new Node(node, graph);
+		node = new Node(node, graph);
 		node.on("update", () => graph[update](updateType.change("node"), node));
 		node.on("delete", this.deleteNode.bind(this, graph, node.id));
 

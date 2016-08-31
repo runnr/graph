@@ -96,6 +96,9 @@ class Edge extends mixins(UpdateEmitter()) {
 	}
 
 	delete() {
+		if(!this.graph.writable)
+			throw new owe.exposed.Error("The edge could not be deleted because its containing graph is not writable.");
+
 		this[UpdateEmitter.delete]();
 	}
 }

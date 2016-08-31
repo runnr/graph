@@ -1,5 +1,6 @@
 "use strict";
 
+const owe = require("owe.js");
 const { mix } = require("mixwith");
 
 const internalize = require("../helpers/internalize");
@@ -42,6 +43,9 @@ class DataNode extends mix(Node).with(UpdateEmitter(["data", "constraint"])) {
 		return super.data;
 	}
 	set data(value) {
+		if(this[gotData] && !this.graph.writable)
+			throw new owe.exposed.Error("The node could not be changed because its containing graph is not writable.");
+
 		super.data = constraints.match(value, this.constraint);
 		this[gotData] = true;
 	}
@@ -50,6 +54,9 @@ class DataNode extends mix(Node).with(UpdateEmitter(["data", "constraint"])) {
 		return super.constraint;
 	}
 	set constraint(value) {
+		if(this[gotData] && !this.graph.writable)
+			throw new owe.exposed.Error("The node could not be changed because its containing graph is not writable.");
+
 		super.constraint = constraints.validate(value);
 
 		// Remove data from this DataNode if the new constraint does not allow it:

@@ -116,6 +116,9 @@ class Node extends mixins(UpdateEmitter()) {
 	}
 
 	delete() {
+		if(!this.graph.writable)
+			throw new owe.exposed.Error("The node could not be deleted because its containing graph is not writable.");
+
 		const edges = this.edges;
 
 		edges.in.forEach(edge => edge.delete());
