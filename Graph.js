@@ -77,23 +77,23 @@ class Graph extends mixins(UpdateEmitter(["nodes", "edges"])) {
 		return super.nodes;
 	}
 	set nodes(val) {
-		super.nodes = operations.prepareGraphList(this, "Node", val);
+		super.nodes = operations.prepareGraphList(this, "node", val);
 	}
 
 	get edges() {
 		return super.edges;
 	}
 	set edges(val) {
-		super.edges = operations.prepareGraphList(this, "Edge", val);
+		super.edges = operations.prepareGraphList(this, "edge", val);
 	}
 }
 
 const operations = {
 	prepareGraphList(graph, type, val) {
-		Object.keys(val).forEach(id => val[id] = operations[`instanciate${type}`](graph, val[id]));
+		Object.keys(val).forEach(id => val[id] = operations.instanciate(graph, type, val[id]));
 
 		Object.defineProperty(val, "add", {
-			value: graph.writable ? preset => this[`add${type}`](graph, preset) : () => {
+			value: graph.writable ? preset => this.add(graph, type, preset) : () => {
 				throw new owe.exposed.Error(`The ${type} could not be added because the graph is not writable.`);
 			}
 		});
@@ -104,89 +104,48 @@ const operations = {
 					filter: true
 				}
 			}), {
-				router: id => this[`get${type}`](graph, id)
+				router: id => this.get(graph, type, id)
 			}
 		]), "rebind");
 	},
 
-	instanciateNode(graph, node) {
-		node = new Node(node, graph);
-		node.on("update", () => graph[update](updateType.change("node"), node));
-		node.on("delete", this.deleteNode.bind(this, graph, node.id));
+	instanciate(graph, type, preset) {
+		preset = type === "node" ? new Node(preset, graph) : new Edge(preset, graph);
+		preset.on("update", () => graph[update](updateType.change(type), preset));
+		preset.on("delete", () => this.delete(graph, type, preset.id));
 
-		return node;
+		return preset;
 	},
 
-	instanciateEdge(graph, edge) {
-		edge = new Edge(edge, graph);
-		edge.on("update", () => graph[update](updateType.change("edge"), edge));
-		edge.on("delete", this.deleteEdge.bind(this, graph, edge.id));
+	add(graph, type, preset) {
+		if(!preset || typeof preset !== "object")
+			throw new owe.exposed.TypeError(`Presets for ${type}s have to be objects.`);
 
-		return edge;
-	},
+		const id = preset.id = graph.idCount + 1;
+		const instance = graph[`${type}s`][id] = this.instanciate(graph, type, preset);
 
-	addNode(graph, node) {
-		if(!node || typeof node !== "object")
-			throw new owe.exposed.TypeError("Nodes have to be objects.");
-
-		const id = graph.idCount + 1;
-
-		node.id = id;
-
-		node = graph.nodes[id] = this.instanciateNode(graph, node);
 		graph.idCount = id;
 
-		graph[update](updateType.add("node"), node);
+		graph[update](updateType.add(type), instance);
 
-		return node;
+		return instance;
 	},
 
-	addEdge(graph, edge) {
-		if(!edge || typeof edge !== "object")
-			throw new owe.exposed.TypeError("Edges have to be objects.");
+	get(graph, type, id) {
+		if(!(id in graph[`${type}s`]))
+			throw new owe.exposed.Error(`There is no ${type} with the id ${id}.`);
 
-		const id = graph.idCount + 1;
-
-		edge.id = id;
-		edge = graph.edges[id] = this.instanciateEdge(graph, edge);
-		graph.idCount = id;
-
-		graph[update](updateType.add("edge"), edge);
-
-		return edge;
+		return graph[`${type}s`][id];
 	},
 
-	getNode(graph, id) {
-		if(!(id in graph.nodes))
-			throw new owe.exposed.Error(`There is no node with the id ${id}.`);
+	delete(graph, type, id) {
+		if(!(id in graph[`${type}s`]))
+			throw new owe.exposed.Error(`There is no ${type} with the id ${id}.`);
 
-		return graph.nodes[id];
+		delete graph[`${type}s`][id];
+
+		graph[update](updateType.delete(type), id);
 	},
-
-	getEdge(graph, id) {
-		if(!(id in graph.edges))
-			throw new owe.exposed.Error(`There is no edge with the id ${id}.`);
-
-		return graph.edges[id];
-	},
-
-	deleteNode(graph, id) {
-		if(!(id in graph.nodes))
-			throw new owe.exposed.Error(`There is no node with the id ${id}.`);
-
-		delete graph.nodes[id];
-
-		graph[update](updateType.delete("node"), id);
-	},
-
-	deleteEdge(graph, id) {
-		if(!(id in graph.edges))
-			throw new owe.exposed.Error(`There is no edge with the id ${id}.`);
-
-		delete graph.edges[id];
-
-		graph[update](updateType.delete("edge"), id);
-	}
 };
 
 module.exports = Graph;
