@@ -110,7 +110,7 @@ const operations = {
 	},
 
 	instanciate(graph, type, preset) {
-		preset = type === "node" ? new Node(preset, graph) : new Edge(preset, graph);
+		preset = type === "node" ? Node.create(preset, graph) : new Edge(preset, graph);
 		preset.on("update", () => graph[update](updateType.change(type), preset));
 		preset.on("delete", () => this.delete(graph, type, preset.id));
 

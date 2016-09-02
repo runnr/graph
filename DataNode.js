@@ -1,7 +1,7 @@
 "use strict";
 
 const owe = require("owe.js");
-const { mix } = require("mixwith");
+const { mixins } = require("mixwith");
 
 const internalize = require("../helpers/internalize");
 const UpdateEmitter = require("../events/UpdateEmitter");
@@ -12,31 +12,43 @@ const constraints = require("./constraints");
 
 const gotData = Symbol("gotData");
 
-class DataNode extends mix(Node).with(UpdateEmitter(["data", "constraint"])) {
-	constructor(preset) {
+class DataNode extends mixins(Node({
+	data: {
+		exposed: true,
+		writable: true
+	},
+	constraint: {
+		exposed: true,
+		writable: true
+	}
+}), UpdateEmitter(["data", "constraint"])) {
+	constructor() {
 		super();
-		this[Node.expose](["data", "constraint"], {
-			serializable: true,
-			writable: true
-		});
 		internalize(this, ["data", "constraint"]);
+	}
+
+	assign(preset, graphContainer) {
+		super.assign(preset, graphContainer);
 
 		this[gotData] = false;
+
 		this.constraint = preset.constraint;
 
 		if(preset.data !== undefined)
 			this.data = preset.data;
 
-		Object.defineProperty(this, "ports", {
-			get: () => ({
-				in: {},
-				out: {
-					data: {
-						constraint: this.constraint
-					}
+		return this;
+	}
+
+	get ports() {
+		return {
+			in: {},
+			out: {
+				data: {
+					constraint: this.constraint
 				}
-			})
-		});
+			}
+		};
 	}
 
 	get data() {

@@ -1,46 +1,37 @@
 "use strict";
 
 const owe = require("owe.js");
-const { mixins } = require("mixwith");
+const { mix, Mixin } = require("mixwith");
 
 const UpdateEmitter = require("../events/UpdateEmitter");
 
 const graph = Symbol("graph");
-const oweExposed = Symbol("exposed");
-const oweRoutes = Symbol("routes");
-const oweWritable = Symbol("writable");
-const expose = Symbol("expose");
 
-class Node extends mixins(UpdateEmitter()) {
-	constructor(preset, parentGraph) {
-		// Node is an abstract class.
-		// If instanciated directly, the intended concrete class will be read from preset.type and instanciated instead:
-		if(new.target === Node) {
-			if(typeof preset.id !== "number")
-				throw new TypeError(`Invalid node id '${preset.id}'.`);
-
-			if(!(preset.type in nodeTypes))
-				throw new owe.exposed.Error(`Unknown node type '${preset.type}'.`);
-
-			return Object.assign(new nodeTypes[preset.type](preset), {
-				id: preset.id,
-				type: preset.type,
-				[graph]: parentGraph
-			});
-		}
-
-		super();
+const Node = (routableProperties = {}) => Mixin(superclass => class Node extends mix(superclass).with(UpdateEmitter()) {
+	constructor() {
+		super(...arguments);
 
 		/* owe binding: */
 
-		const exposed = this[oweExposed] = ["id", "type", "ports"];
-		const routes = this[oweRoutes] = new Set([
+		const exposed = new Set(["id", "type", "ports"]);
+		const routes = new Set([
 			...exposed,
 			"graph",
 			"edges",
 			"neighbours",
 			"delete"
 		]);
+		const writable = new Set();
+
+		Object.keys(routableProperties).forEach(property => {
+			routes.add(property);
+
+			if(routableProperties[property].exposed)
+				exposed.add(property);
+
+			if(routableProperties[property].writable)
+				writable.add(property);
+		});
 
 		owe(this, owe.serve({
 			router: {
@@ -53,7 +44,7 @@ class Node extends mixins(UpdateEmitter()) {
 						return state.value.hasOwnProperty(destination);
 					}
 				}),
-				writable: owe.filter(this[oweWritable] = new Set()),
+				writable: owe.filter(writable),
 				traversePrototype: true // Allow access to Node.prototype getters
 			},
 			closer: {
@@ -64,17 +55,15 @@ class Node extends mixins(UpdateEmitter()) {
 		owe.expose.properties(this, exposed);
 	}
 
-	[expose](property, options) {
-		if(Array.isArray(property))
-			return property.map(property => this[expose](property, options));
+	assign(preset, parentGraph) {
+		if(typeof preset.id !== "number")
+			throw new TypeError(`Invalid node id '${preset.id}'.`);
 
-		this[oweRoutes].add(property);
-
-		if(options && options.serializable)
-			this[oweExposed].push(property);
-
-		if(options && options.writable)
-			this[oweWritable].add(property);
+		return Object.assign(this, {
+			id: preset.id,
+			type: preset.type,
+			[graph]: parentGraph || this.graph
+		});
 	}
 
 	get graph() {
@@ -126,9 +115,16 @@ class Node extends mixins(UpdateEmitter()) {
 
 		this[UpdateEmitter.delete]();
 	}
-}
+});
 
-Object.assign(Node, { expose });
+Object.assign(Node, {
+	create(preset, parentGraph) {
+		if(!(preset.type in nodeTypes))
+			throw new owe.exposed.Error(`Unknown node type '${preset.type}'.`);
+
+		return new nodeTypes[preset.type]().assign(preset, parentGraph);
+	}
+});
 
 module.exports = Node;
 
