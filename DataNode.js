@@ -6,13 +6,7 @@ const { mixins } = require("mixwith");
 const internalize = require("../helpers/internalize");
 const UpdateEmitter = require("../events/UpdateEmitter");
 
-const Node = require("./Node");
-
-const constraints = require("./constraints");
-
-const gotData = Symbol("gotData");
-
-class DataNode extends mixins(Node({
+const Node = require("./Node")({
 	data: {
 		exposed: true,
 		writable: true
@@ -21,7 +15,13 @@ class DataNode extends mixins(Node({
 		exposed: true,
 		writable: true
 	}
-}), UpdateEmitter(["data", "constraint"])) {
+});
+
+const constraints = require("./constraints");
+
+const gotData = Symbol("gotData");
+
+class DataNode extends mixins(Node, UpdateEmitter(["data", "constraint"])) {
 	constructor() {
 		super();
 		internalize(this, ["data", "constraint"]);

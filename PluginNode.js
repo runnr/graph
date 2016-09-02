@@ -3,15 +3,16 @@
 const owe = require("owe.js");
 const { mixins } = require("mixwith");
 
-const Node = require("./Node");
 const plugins = require("../plugins");
 
-class PluginNode extends mixins(Node({
+const Node = require("./Node")({
 	pluginId: {
 		exposed: true
 	},
 	plugin: {}
-})) {
+});
+
+class PluginNode extends mixins(Node) {
 	assign(preset, parentGraph) {
 		super.assign(preset, parentGraph);
 
