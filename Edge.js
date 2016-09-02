@@ -12,9 +12,6 @@ const graph = Symbol("graph");
 
 class Edge extends mixins(UpdateEmitter()) {
 	constructor(preset, parentGraph) {
-		if(preset instanceof Edge)
-			return preset;
-
 		if(typeof preset.id !== "number")
 			throw new TypeError(`Invalid edge id '${preset.id}'.`);
 

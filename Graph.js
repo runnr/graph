@@ -21,10 +21,10 @@ class Graph extends mixins(UpdateEmitter(["nodes", "edges"])) {
 
 		Object.assign(this, {
 			[container]: parentContainer,
+			[writable]: !!isWritable,
 			nodes: {},
 			edges: {},
-			idCount: 0,
-			[writable]: !!isWritable
+			idCount: 0
 		});
 
 		/* owe binding: */
