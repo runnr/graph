@@ -6,8 +6,8 @@ const { mixins } = require("mixwith");
 const UpdateEmitter = require("../events/UpdateEmitter");
 const internalize = require("../helpers/internalize");
 const filterObject = require("../helpers/filterObject");
-const Node = require("./Node");
-const Edge = require("./Edge");
+const node = require("./node");
+const edge = require("./edge");
 
 const { update, type: updateType } = UpdateEmitter;
 
@@ -110,7 +110,7 @@ const operations = {
 	},
 
 	instanciate(graph, type, preset) {
-		preset = type === "node" ? Node.create(preset, graph) : new Edge(preset, graph);
+		preset = (type === "node" ? node : edge).create(preset, graph);
 		preset.on("update", () => graph[update](updateType.change(type), preset));
 		preset.on("delete", () => this.delete(graph, type, preset.id));
 

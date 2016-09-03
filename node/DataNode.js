@@ -3,8 +3,8 @@
 const owe = require("owe.js");
 const { mixins } = require("mixwith");
 
-const internalize = require("../helpers/internalize");
-const UpdateEmitter = require("../events/UpdateEmitter");
+const internalize = require("../../helpers/internalize");
+const UpdateEmitter = require("../../events/UpdateEmitter");
 
 const Node = require("./Node")({
 	data: {
@@ -17,7 +17,7 @@ const Node = require("./Node")({
 	}
 });
 
-const constraints = require("./constraints");
+const constraints = require("../constraints");
 
 const gotData = Symbol("gotData");
 

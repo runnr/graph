@@ -3,7 +3,7 @@
 const owe = require("owe.js");
 const { mix, Mixin } = require("mixwith");
 
-const UpdateEmitter = require("../events/UpdateEmitter");
+const UpdateEmitter = require("../../events/UpdateEmitter");
 
 const graph = Symbol("graph");
 
@@ -117,20 +117,4 @@ const Node = (routableProperties = {}) => Mixin(superclass => class Node extends
 	}
 });
 
-Object.assign(Node, {
-	create(preset, parentGraph) {
-		if(!(preset.type in nodeTypes))
-			throw new owe.exposed.Error(`Unknown node type '${preset.type}'.`);
-
-		return new nodeTypes[preset.type]().assign(preset, parentGraph);
-	}
-});
-
 module.exports = Node;
-
-const nodeTypes = {
-	__proto__: null,
-
-	data: require("./DataNode"),
-	plugin: require("./PluginNode")
-};
