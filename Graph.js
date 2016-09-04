@@ -44,9 +44,6 @@ class Graph extends mixins(UpdateEmitter(["nodes", "edges"])) {
 	}
 
 	assign(preset) {
-		if(!preset)
-			return this;
-
 		Object.assign(this, filterObject(preset, ["nodes", "edges", "idCount"]));
 
 		if(!this.nodes)
