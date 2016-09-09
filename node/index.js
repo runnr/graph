@@ -10,7 +10,6 @@ const nodeTypes = {
 	data: require("./DataNode")
 };
 
-
 module.exports = {
 	Node,
 
@@ -26,7 +25,7 @@ module.exports = {
 			throw new TypeError("Node types have to be strings.");
 
 		if(type in nodeTypes && nodeType !== nodeTypes[nodeType])
-			throw new Error(`There already is a  '${type}' node type.`);
+			throw new Error(`There already is a '${type}' node type.`);
 
 		nodeTypes[type] = nodeType;
 
