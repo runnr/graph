@@ -32,7 +32,7 @@ module.exports = Mixin(superclass => class GraphContainer extends superclass {
 
 		this[graph] = val;
 
-		if(this[UpdateEmitter.update])
+		if(this instanceof UpdateEmitter)
 			this[UpdateEmitter.update](eventType, val);
 	}
 });

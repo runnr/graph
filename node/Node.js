@@ -1,13 +1,15 @@
 "use strict";
 
 const owe = require("owe.js");
-const { mix, Mixin } = require("mixwith");
+const { mix } = require("mixwith");
+
+const MixinFactory = require("../../helpers/MixinFactory");
 
 const UpdateEmitter = require("../../events/UpdateEmitter");
 
 const graph = Symbol("graph");
 
-const Node = (routableProperties = {}) => Mixin(superclass => class Node extends mix(superclass).with(UpdateEmitter()) {
+const Node = MixinFactory((routableProperties = {}) => superclass => class Node extends mix(superclass).with(UpdateEmitter()) {
 	constructor() {
 		super(...arguments);
 
