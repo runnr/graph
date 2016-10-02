@@ -1,38 +1,31 @@
 "use strict";
 
-const { Mixin } = require("mixwith");
+const { mix, Mixin } = require("mixwith");
 
 const UpdateEmitter = require("../events/UpdateEmitter");
+const Persistable = require("../store/Persistable");
 
 const Graph = require("./Graph");
 
-const graph = Symbol("graph");
-
-const eventType = UpdateEmitter.type.change("graph");
-
-module.exports = Mixin(superclass => class GraphContainer extends superclass {
+module.exports = Mixin(superclass => class GraphContainer extends mix(superclass).with(UpdateEmitter(["graph"])) {
 	get graph() {
-		return this[graph];
+		return super.graph;
 	}
 
 	set graph(val) {
 		if(!(val instanceof Graph))
 			throw new TypeError(`${this.constructor.name}#graph has to be an instance of Graph.`);
 
-		if(val === this[graph])
+		if(val === super.graph)
 			return;
 
-		if(this.persist) {
-			if(this[graph])
-				this[graph].removeListener("update", this.persist);
+		if(this instanceof Persistable) {
+			if(super.graph)
+				super.graph.removeListener("update", this.persist);
 
-			if(val)
-				val.on("update", this.persist);
+			val.on("update", this.persist);
 		}
 
-		this[graph] = val;
-
-		if(this instanceof UpdateEmitter)
-			this[UpdateEmitter.update](eventType, val);
+		super.graph = val;
 	}
 });
