@@ -2,7 +2,8 @@
 
 const owe = require("owe.js");
 
-const Node = require("./Node");
+const PluginNode = require("./PluginNode");
+const DataNode = require("./DataNode");
 
 class Graph {
 	constructor(graph) {
@@ -14,7 +15,7 @@ class Graph {
 			const edges = graph.edges;
 
 			Object.keys(nodes).forEach(nodeId => this.nodeMap.set(
-				nodes[nodeId].id, new Node(nodes[nodeId], this)
+				nodes[nodeId].id, new (nodes[nodeId].type === "plugin" ? PluginNode : DataNode)(nodes[nodeId], this)
 			));
 
 			return Promise.all(Object.keys(edges).map(edgeId => {

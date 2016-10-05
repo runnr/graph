@@ -1,13 +1,16 @@
 "use strict";
 
+const { mixins } = require("mixwith");
 const sandboxedModule = require("sandboxed-module");
 
 const Node = require("./Node");
 const SandboxHandle = require("./SandboxHandle");
 
-class PluginNode extends Node {
+class PluginNode extends mixins(Node) {
 	constructor(preset, parentGraph) {
-		super(preset, parentGraph);
+		super();
+
+		this.assign(preset, parentGraph);
 
 		this.plugin = this.api.plugin;
 
