@@ -2,10 +2,10 @@
 
 const owe = require("owe.js");
 
-const PluginNode = require("./PluginNode");
-const DataNode = require("./DataNode");
+const PluginNode = require("./node/executor/PluginNodeExecutor");
+const DataNode = require("./node/executor/DataNodeExecutor");
 
-class Graph {
+class GraphExecutor {
 	constructor(graph) {
 		this.nodeMap = new Map();
 		this.api = graph;
@@ -53,4 +53,4 @@ class Graph {
 	}
 }
 
-module.exports = Graph;
+module.exports = GraphExecutor;

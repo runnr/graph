@@ -5,5 +5,5 @@ module.exports = {
 	GraphContainer: require("./GraphContainer"),
 	node: require("./node"),
 	edge: require("./edge"),
-	GraphExecutor: require("./executor/Graph")
+	GraphExecutor: require("./GraphExecutor")
 };

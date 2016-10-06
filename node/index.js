@@ -2,12 +2,12 @@
 
 const owe = require("owe.js");
 
-const Node = require("./Node");
+const Node = require("./model/Node");
 
 const nodeTypes = {
 	__proto__: null,
 
-	data: require("./DataNode")
+	data: require("./model/DataNode")
 };
 
 module.exports = {
