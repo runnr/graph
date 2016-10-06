@@ -2,7 +2,7 @@
 
 const { Mixin } = require("mixwith");
 
-const generateLock = require("../../helpers/generateLock");
+const generateLock = require("../../../helpers/generateLock");
 
 const Port = require("./Port");
 

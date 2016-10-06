@@ -2,18 +2,18 @@
 
 const { mixins } = require("mixwith");
 
-const Node = require("./Node");
+const NodeExecutor = require("./NodeExecutor");
 
-class DataNode extends mixins(Node) {
-	constructor(preset, parentGraph) {
-		super();
-
-		this.assign(preset, parentGraph);
+class DataNodeExecutor extends mixins(NodeExecutor) {
+	assign(preset, parentGraph) {
+		super.assign(preset, parentGraph);
 
 		Promise.all([this.api.data, this.graph.connected]).then(([data]) => {
 			this.ports.out.data.writable.write(data);
 		});
+
+		return this;
 	}
 }
 
-module.exports = DataNode;
+module.exports = DataNodeExecutor;

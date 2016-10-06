@@ -2,8 +2,7 @@
 
 const owe = require("owe.js");
 
-const PluginNode = require("./node/executor/PluginNodeExecutor");
-const DataNode = require("./node/executor/DataNodeExecutor");
+const node = require("../node");
 
 class GraphExecutor {
 	constructor(graph) {
@@ -15,7 +14,7 @@ class GraphExecutor {
 			const edges = graph.edges;
 
 			Object.keys(nodes).forEach(nodeId => this.nodeMap.set(
-				nodes[nodeId].id, new (nodes[nodeId].type === "plugin" ? PluginNode : DataNode)(nodes[nodeId], this)
+				nodes[nodeId].id, node.createExecutor(nodes[nodeId], this)
 			));
 
 			return Promise.all(Object.keys(edges).map(edgeId => {

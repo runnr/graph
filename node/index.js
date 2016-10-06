@@ -2,33 +2,40 @@
 
 const owe = require("owe.js");
 
-const Node = require("./model/Node");
+const nodeTypes = Object.create(null);
 
-const nodeTypes = {
-	__proto__: null,
-
-	data: require("./model/DataNode")
-};
-
-module.exports = {
-	Node,
+const node = {
+	Node: require("./model/Node"),
+	NodeExecutor: require("./executor/NodeExecutor"),
 
 	create(preset, parentGraph) {
 		if(!(preset.type in nodeTypes))
 			throw new owe.exposed.Error(`Unknown node type '${preset.type}'.`);
 
-		return new nodeTypes[preset.type]().assign(preset, parentGraph);
+		return new nodeTypes[preset.type].Model().assign(preset, parentGraph);
 	},
 
-	registerNodeType(type, nodeType) {
+	createExecutor(preset, parentGraph) {
+		if(!(preset.type in nodeTypes))
+			throw new owe.exposed.Error(`Unknown node type '${preset.type}'.`);
+
+		return new nodeTypes[preset.type].Executor().assign(preset, parentGraph);
+	},
+
+	registerNodeType(type, Model, Executor) {
 		if(typeof type !== "string")
 			throw new TypeError("Node types have to be strings.");
 
-		if(type in nodeTypes && nodeType !== nodeTypes[nodeType])
+		if(typeof Model !== "function" || typeof Executor !== "function")
+			throw new TypeError("Node models and executors have to be classes.");
+
+		if(type in nodeTypes)
 			throw new Error(`There already is a '${type}' node type.`);
 
-		nodeTypes[type] = nodeType;
-
-		return nodeType;
+		nodeTypes[type] = { Model, Executor };
 	}
 };
+
+node.registerNodeType("data", require("./model/DataNode"), require("./executor/DataNodeExecutor"));
+
+module.exports = node;

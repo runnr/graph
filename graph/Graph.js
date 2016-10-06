@@ -3,11 +3,11 @@
 const owe = require("owe.js");
 const { mixins } = require("mixwith");
 
-const UpdateEmitter = require("../events/UpdateEmitter");
-const internalize = require("../helpers/internalize");
-const filterObject = require("../helpers/filterObject");
-const node = require("./node");
-const edge = require("./edge");
+const UpdateEmitter = require("../../events/UpdateEmitter");
+const internalize = require("../../helpers/internalize");
+const filterObject = require("../../helpers/filterObject");
+const node = require("../node");
+const edge = require("../edge");
 
 const { update, type: updateType } = UpdateEmitter;
 

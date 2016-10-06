@@ -3,9 +3,9 @@
 const owe = require("owe.js");
 const { mix } = require("mixwith");
 
-const MixinFactory = require("../../helpers/MixinFactory");
+const MixinFactory = require("../../../helpers/MixinFactory");
 
-const UpdateEmitter = require("../../events/UpdateEmitter");
+const UpdateEmitter = require("../../../events/UpdateEmitter");
 
 const graph = Symbol("graph");
 

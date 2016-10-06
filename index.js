@@ -1,9 +1,8 @@
 "use strict";
 
 module.exports = {
-	Graph: require("./Graph"),
 	GraphContainer: require("./GraphContainer"),
+	graph: require("./graph"),
 	node: require("./node"),
-	edge: require("./edge"),
-	GraphExecutor: require("./GraphExecutor")
+	edge: require("./edge")
 };
