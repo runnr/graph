@@ -6,7 +6,7 @@ const generateLock = require("../../helpers/generateLock");
 
 const Port = require("./Port");
 
-const Node = Mixin(superclass => class Node extends superclass {
+const NodeExecutor = Mixin(superclass => class NodeExecutor extends superclass {
 	constructor() {
 		super(...arguments);
 
@@ -36,4 +36,4 @@ const Node = Mixin(superclass => class Node extends superclass {
 	}
 });
 
-module.exports = Node;
+module.exports = NodeExecutor;
