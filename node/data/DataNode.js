@@ -6,7 +6,7 @@ const { mixins } = require("mixwith");
 const internalize = require("../../../helpers/internalize");
 const UpdateEmitter = require("../../../events/UpdateEmitter");
 
-const Node = require("./Node")({
+const Node = require("../Node")({
 	data: {
 		exposed: true,
 		writable: true

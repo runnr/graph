@@ -2,7 +2,7 @@
 
 const { mixins } = require("mixwith");
 
-const NodeExecutor = require("./NodeExecutor");
+const NodeExecutor = require("../NodeExecutor");
 
 class DataNodeExecutor extends mixins(NodeExecutor) {
 	assign(preset, parentGraph) {

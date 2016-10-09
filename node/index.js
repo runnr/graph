@@ -5,8 +5,8 @@ const owe = require("owe.js");
 const nodeTypes = Object.create(null);
 
 const node = {
-	Node: require("./model/Node"),
-	NodeExecutor: require("./executor/NodeExecutor"),
+	Node: require("./Node"),
+	NodeExecutor: require("./NodeExecutor"),
 
 	create(preset, parentGraph) {
 		if(!(preset.type in nodeTypes))
@@ -36,6 +36,6 @@ const node = {
 	}
 };
 
-node.registerNodeType("data", require("./model/DataNode"), require("./executor/DataNodeExecutor"));
+node.registerNodeType("data", require("./data/DataNode"), require("./data/DataNodeExecutor"));
 
 module.exports = node;

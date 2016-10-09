@@ -2,7 +2,7 @@
 
 const stream = require("stream");
 
-const constraints = require("../../constraints");
+const constraints = require("../constraints");
 
 class Port {
 	constructor({ constraint, binary }) {
