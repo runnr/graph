@@ -5,9 +5,16 @@ const owe = require("owe.js");
 const node = require("../node");
 
 class GraphExecutor {
-	constructor(graph) {
-		this.nodeMap = new Map();
-		this.api = graph;
+	constructor(graph, io = { in: {}, out: {} }) {
+		if(!io || typeof io !== "object" || typeof io.in !== "object" || typeof io.out !== "object")
+			throw new TypeError("Graph executors IO data has to be an object of the form { in: [in object], out: [out object] }.");
+
+		Object.assign(this, {
+			nodeMap: new Map(),
+			api: graph,
+			in: io.in,
+			out: io.out
+		});
 
 		this.connected = graph.then(graph => {
 			const nodes = graph.nodes;

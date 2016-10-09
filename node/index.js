@@ -37,5 +37,7 @@ const node = {
 };
 
 node.registerNodeType("data", require("./data/DataNode"), require("./data/DataNodeExecutor"));
+node.registerNodeType("in", require("./io/IoNode"), require("./io/IoNodeExecutor"));
+node.registerNodeType("out", require("./io/IoNode"), require("./io/IoNodeExecutor"));
 
 module.exports = node;

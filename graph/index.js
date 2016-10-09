@@ -8,7 +8,7 @@ module.exports = {
 		return new Graph(parentContainer, isWritable);
 	},
 
-	createExecutor(graph) {
-		return new GraphExecutor(graph);
+	createExecutor(graph, io) {
+		return new GraphExecutor(graph, io);
 	}
 };
