@@ -23,7 +23,7 @@ const gotData = Symbol("gotData");
 
 class DataNode extends mixins(Node, UpdateEmitter(["data", "constraint"])) {
 	constructor() {
-		super();
+		super(...arguments);
 		internalize(this, ["data", "constraint"]);
 	}
 

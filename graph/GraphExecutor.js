@@ -20,9 +20,9 @@ class GraphExecutor {
 			const nodes = graph.nodes;
 			const edges = graph.edges;
 
-			Object.keys(nodes).forEach(nodeId => this.nodeMap.set(
-				nodes[nodeId].id, node.createExecutor(nodes[nodeId], this)
-			));
+			Object.keys(nodes).forEach(nodeId => {
+				this.nodeMap.set(nodes[nodeId].id, node.createExecutor(nodes[nodeId], this));
+			});
 
 			return Promise.all(Object.keys(edges).map(edgeId => {
 				const edge = edges[edgeId];

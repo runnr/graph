@@ -14,15 +14,16 @@ const NodeExecutor = Mixin(superclass => class NodeExecutor extends superclass {
 	}
 
 	assign(preset, parentGraph) {
-		this.id = preset.id;
-		this.type = preset.type;
-		this.graph = parentGraph;
-		this.api = parentGraph.api.nodes[preset.id];
-
-		this.ports = {
-			in: {},
-			out: {}
-		};
+		Object.assign(this, {
+			id: preset.id,
+			type: preset.type,
+			graph: parentGraph,
+			api: parentGraph.api.nodes[preset.id],
+			ports: {
+				in: {},
+				out: {}
+			}
+		});
 
 		this.api.ports.then(ports => {
 			Object.keys(ports.in).forEach(portName => {
