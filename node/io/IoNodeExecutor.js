@@ -16,7 +16,7 @@ class IoNodeExecutor extends mixins(NodeExecutor) {
 				this.graph.in[name].pipe(this.ports.out.data.writable);
 			}
 			else {
-				if(!this.graph.in[name])
+				if(!this.graph.out[name])
 					throw new ReferenceError(`There is no graph output named '${name}'.`);
 
 				this.ports.in.data.readable.pipe(this.graph.out[name]);
