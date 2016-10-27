@@ -8,7 +8,7 @@ class IoNodeExecutor extends mixins(NodeExecutor) {
 	assign(preset, parentGraph) {
 		super.assign(preset, parentGraph);
 
-		Promise.all([this.api.name]).then(([name]) => {
+		this.api.name.then(name => {
 			if(this.type === "in") {
 				if(!this.graph.in[name])
 					throw new ReferenceError(`There is no graph input named '${name}'.`);
