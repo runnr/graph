@@ -29,7 +29,7 @@ class Graph extends mixins(UpdateEmitter(["nodes", "edges"])) {
 
 		/* owe binding: */
 
-		const exposed = ["nodes", "edges", "writable"];
+		const exposed = ["nodes", "edges", "ports", "writable"];
 
 		owe(this, owe.serve({
 			router: {
@@ -82,6 +82,22 @@ class Graph extends mixins(UpdateEmitter(["nodes", "edges"])) {
 	}
 	set edges(val) {
 		super.edges = operations.prepareGraphList(this, "edge", val);
+	}
+
+	get ports() {
+		const ports = {
+			in: {},
+			out: {}
+		};
+
+		Object.keys(this.nodes).forEach(id => {
+			const node = this.nodes[id];
+
+			if(node.type === "in" || node.type === "out")
+				ports[node.type][node.name] = node.port;
+		});
+
+		return ports;
 	}
 }
 
