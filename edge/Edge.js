@@ -62,7 +62,13 @@ class Edge extends mixins(UpdateEmitter()) {
 		/* owe binding: */
 
 		const exposed = ["id", "from", "to"];
-		const routes = new Set([...exposed, "delete"]);
+		const routes = new Set([
+			...exposed,
+			"graph",
+			"fromNode",
+			"toNode",
+			"delete"
+		]);
 
 		owe(this, owe.serve({
 			router: {
@@ -84,6 +90,10 @@ class Edge extends mixins(UpdateEmitter()) {
 		owe.expose.properties(this, exposed);
 	}
 
+	get graph() {
+		return this[graph];
+	}
+
 	get fromNode() {
 		return this[graph].nodes[this.from.node];
 	}
@@ -93,7 +103,7 @@ class Edge extends mixins(UpdateEmitter()) {
 	}
 
 	delete() {
-		if(!this.graph.writable)
+		if(!this[graph].writable)
 			throw new owe.exposed.Error("The edge could not be deleted because its containing graph is not writable.");
 
 		this[UpdateEmitter.delete]();
