@@ -64,7 +64,7 @@ const Node = MixinFactory((routableProperties = {}) => superclass => class Node 
 		return Object.assign(this, {
 			id: preset.id,
 			type: preset.type,
-			[graph]: parentGraph || this.graph
+			[graph]: parentGraph
 		});
 	}
 
@@ -107,7 +107,7 @@ const Node = MixinFactory((routableProperties = {}) => superclass => class Node 
 	}
 
 	delete() {
-		if(!this.graph.writable)
+		if(!this[graph].writable)
 			throw new owe.exposed.Error("The node could not be deleted because its containing graph is not writable.");
 
 		const edges = this.edges;
