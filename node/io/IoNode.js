@@ -14,7 +14,8 @@ const Node = require("../Node")({
 	constraint: {
 		exposed: true,
 		writable: true
-	}
+	},
+	port: {}
 });
 
 const constraints = require("../../constraints");
@@ -38,9 +39,7 @@ class IoNode extends mixins(Node, UpdateEmitter(["name", "constraint"])) {
 
 	get ports() {
 		const port = {
-			data: {
-				constraint: this.constraint
-			}
+			data: this.port
 		};
 
 		return this.type === "in" ? {
@@ -49,6 +48,12 @@ class IoNode extends mixins(Node, UpdateEmitter(["name", "constraint"])) {
 		} : {
 			in: port,
 			out: {}
+		};
+	}
+
+	get port() {
+		return {
+			constraint: this.constraint
 		};
 	}
 
