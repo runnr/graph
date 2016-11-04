@@ -29,10 +29,8 @@ class IoNode extends mixins(Node, UpdateEmitter(["name", "constraint"])) {
 	assign(preset, graphContainer) {
 		super.assign(preset, graphContainer);
 
+		this.name = preset.name;
 		this.constraint = preset.constraint;
-
-		if(preset.name !== undefined)
-			this.name = preset.name;
 
 		return this;
 	}
