@@ -22,7 +22,7 @@ const node = {
 		return new nodeTypes[preset.type].Executor().assign(preset, parentGraph);
 	},
 
-	registerNodeType(type, Model, Executor) {
+	registerNodeType(type, { Model, Executor }) {
 		if(typeof type !== "string")
 			throw new TypeError("Node types have to be strings.");
 
@@ -36,8 +36,17 @@ const node = {
 	}
 };
 
-node.registerNodeType("data", require("./data/DataNode"), require("./data/DataNodeExecutor"));
-node.registerNodeType("in", require("./io/IoNode"), require("./io/IoNodeExecutor"));
-node.registerNodeType("out", require("./io/IoNode"), require("./io/IoNodeExecutor"));
+node.registerNodeType("data", {
+	Model: require("./data/DataNode"),
+	Executor: require("./data/DataNodeExecutor")
+});
+node.registerNodeType("in", {
+	Model: require("./io/IoNode"),
+	Executor: require("./io/IoNodeExecutor")
+});
+node.registerNodeType("out", {
+	Model: require("./io/IoNode"),
+	Executor: require("./io/IoNodeExecutor")
+});
 
 module.exports = node;
