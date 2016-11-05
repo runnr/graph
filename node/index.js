@@ -8,11 +8,15 @@ const node = {
 	Node: require("./Node"),
 	NodeExecutor: require("./NodeExecutor"),
 
-	create(preset, parentGraph) {
-		if(!(preset.type in nodeTypes))
-			throw new owe.exposed.Error(`Unknown node type '${preset.type}'.`);
+	instanciate({ type }) {
+		if(!(type in nodeTypes))
+			throw new owe.exposed.Error(`Unknown node type '${type}'.`);
 
-		return new nodeTypes[preset.type].Model().assign(preset, parentGraph);
+		return Object.assign(new nodeTypes[type].Model(), { type });
+	},
+
+	create(preset, parentGraph) {
+		return this.instanciate(preset).assign(preset, parentGraph);
 	},
 
 	createExecutor(preset, parentGraph) {

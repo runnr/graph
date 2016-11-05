@@ -63,7 +63,6 @@ const Node = MixinFactory((routableProperties = {}) => superclass => class Node 
 
 		return Object.assign(this, {
 			id: preset.id,
-			type: preset.type,
 			[graph]: parentGraph
 		});
 	}
