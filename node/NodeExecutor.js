@@ -1,18 +1,12 @@
 "use strict";
 
-const { Mixin } = require("mixwith");
+const { mix, Mixin } = require("mixwith");
 
-const generateLock = require("../../helpers/generateLock");
+const Assignable = require("../../helpers/Assignable");
 
 const Port = require("./Port");
 
-const NodeExecutor = Mixin(superclass => class NodeExecutor extends superclass {
-	constructor() {
-		super(...arguments);
-
-		this.loaded = generateLock();
-	}
-
+const NodeExecutor = Mixin(superclass => class NodeExecutor extends mix(superclass).with(Assignable) {
 	assign(preset, parentGraph) {
 		Object.assign(this, {
 			id: preset.id,
@@ -25,7 +19,7 @@ const NodeExecutor = Mixin(superclass => class NodeExecutor extends superclass {
 			}
 		});
 
-		this.api.ports.then(ports => {
+		return this.api.ports.then(ports => {
 			Object.keys(ports.in).forEach(portName => {
 				this.ports.in[portName] = new Port(ports.in[portName]);
 			});
@@ -33,7 +27,7 @@ const NodeExecutor = Mixin(superclass => class NodeExecutor extends superclass {
 			Object.keys(ports.out).forEach(portName => {
 				this.ports.out[portName] = new Port(ports.out[portName]);
 			});
-		}).then(this.loaded.unlock);
+		});
 	}
 });
 

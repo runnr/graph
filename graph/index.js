@@ -9,6 +9,8 @@ module.exports = {
 	},
 
 	createExecutor(graph, io) {
-		return new GraphExecutor(graph, io);
+		const executor = new GraphExecutor(graph, io);
+
+		return executor.connected.then(() => executor);
 	}
 };

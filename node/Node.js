@@ -4,12 +4,12 @@ const owe = require("owe.js");
 const { mix } = require("mixwith");
 
 const MixinFactory = require("../../helpers/MixinFactory");
-
+const Assignable = require("../../helpers/Assignable");
 const UpdateEmitter = require("../../events/UpdateEmitter");
 
 const graph = Symbol("graph");
 
-const Node = MixinFactory((routableProperties = {}) => superclass => class Node extends mix(superclass).with(UpdateEmitter()) {
+const Node = MixinFactory((routableProperties = {}) => superclass => class Node extends mix(superclass).with(Assignable, UpdateEmitter()) {
 	constructor() {
 		super(...arguments);
 
@@ -61,10 +61,10 @@ const Node = MixinFactory((routableProperties = {}) => superclass => class Node 
 		if(typeof preset.id !== "number")
 			throw new TypeError(`Invalid node id '${preset.id}'.`);
 
-		return Object.assign(this, {
+		return Promise.resolve(Object.assign(this, {
 			id: preset.id,
 			[graph]: parentGraph
-		});
+		}));
 	}
 
 	get graph() {

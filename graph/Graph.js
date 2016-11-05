@@ -4,8 +4,9 @@ const owe = require("owe.js");
 const { mixins } = require("mixwith");
 
 const UpdateEmitter = require("../../events/UpdateEmitter");
+const Assignable = require("../../helpers/Assignable");
 const internalize = require("../../helpers/internalize");
-const filterObject = require("../../helpers/filterObject");
+const stageManager = require("./stageManager");
 const node = require("../node");
 const edge = require("../edge");
 
@@ -14,7 +15,7 @@ const { update, type: updateType } = UpdateEmitter;
 const container = Symbol("container");
 const writable = Symbol("writable");
 
-class Graph extends mixins(UpdateEmitter(["nodes", "edges"])) {
+class Graph extends mixins(Assignable, UpdateEmitter(["nodes", "edges"])) {
 	constructor(parentContainer, isWritable = true) {
 		super();
 		internalize(this, ["nodes", "edges"]);
@@ -44,22 +45,12 @@ class Graph extends mixins(UpdateEmitter(["nodes", "edges"])) {
 	}
 
 	assign(preset) {
-		Object.assign(this, filterObject(preset, ["nodes", "edges", "idCount"]));
-
-		if(!this.nodes)
-			this.nodes = {};
-
-		if(!this.edges)
-			this.edges = {};
-
-		if(!this.idCount)
-			this.idCount = 0;
-
-		return this;
-	}
-
-	get loaded() {
-		return Promise.all(Object.keys(this.nodes).map(id => this.nodes[id].loaded)).then(() => true);
+		return stageManager({
+			nodes: () => operations.prepareGraphList(this, "node", preset.nodes).then(nodes => this.nodes = nodes),
+			edges: () => operations.prepareGraphList(this, "edge", preset.edges).then(edges => this.edges = edges)
+		}).then(() => {
+			this.idCount = preset.idCount;
+		});
 	}
 
 	get container() {
@@ -68,20 +59,6 @@ class Graph extends mixins(UpdateEmitter(["nodes", "edges"])) {
 
 	get writable() {
 		return this[writable];
-	}
-
-	get nodes() {
-		return super.nodes;
-	}
-	set nodes(val) {
-		super.nodes = operations.prepareGraphList(this, "node", val);
-	}
-
-	get edges() {
-		return super.edges;
-	}
-	set edges(val) {
-		super.edges = operations.prepareGraphList(this, "edge", val);
 	}
 
 	get ports() {
@@ -103,45 +80,56 @@ class Graph extends mixins(UpdateEmitter(["nodes", "edges"])) {
 
 const operations = {
 	prepareGraphList(graph, type, val) {
-		Object.keys(val).forEach(id => val[id] = operations.instanciate(graph, type, val[id]));
+		return Promise.all(Object.keys(val).map(id => this.create(graph, type, val[id]))).then(list => {
+			const result = {};
 
-		Object.defineProperty(val, "add", {
-			value: graph.writable ? preset => this.add(graph, type, preset) : () => {
-				throw new owe.exposed.Error(`The ${type} could not be added because the graph is not writable.`);
-			}
-		});
+			list.forEach(entry => result[entry.id] = entry);
 
-		return owe(val, owe.chain([
-			owe.serve({
-				closer: {
-					filter: true
+			Object.defineProperty(result, "add", {
+				value: graph.writable ? preset => this.add(graph, type, preset) : () => {
+					throw new owe.exposed.Error(`The ${type} could not be added because the graph is not writable.`);
 				}
-			}), {
-				router: id => this.get(graph, type, id)
-			}
-		]), "rebind");
+			});
+
+			return owe(result, owe.chain([
+				owe.serve({
+					closer: {
+						filter: true
+					}
+				}), {
+					router: id => this.get(graph, type, id)
+				}
+			]));
+		});
 	},
 
-	instanciate(graph, type, preset) {
-		preset = (type === "node" ? node : edge).create(preset, graph);
-		preset.on("update", () => graph[update](updateType.change(type), preset));
-		preset.on("delete", () => this.delete(graph, type, preset.id));
+	create(graph, type, preset) {
+		return (type === "node" ? node : edge).create(preset, graph).then(instance => {
+			instance.on("update", () => graph[update](updateType.change(type), preset));
+			instance.on("delete", () => this.delete(graph, type, preset.id));
 
-		return preset;
+			return instance;
+		});
 	},
 
 	add(graph, type, preset) {
 		if(!preset || typeof preset !== "object")
 			throw new owe.exposed.TypeError(`Presets for ${type}s have to be objects.`);
 
-		const id = preset.id = graph.idCount + 1;
-		const instance = graph[`${type}s`][id] = this.instanciate(graph, type, preset);
+		const id = preset.id = ++graph.idCount;
 
-		graph.idCount = id;
+		return this.create(graph, type, preset).then(instance => {
+			graph[`${type}s`][id] = instance;
+			graph[update](updateType.add(type), instance);
 
-		graph[update](updateType.add(type), instance);
+			return instance;
+		}, err => {
+			// If reserved id will not be used and no other ids have already been reserved, reset idCount:
+			if(graph.idCount === id)
+				graph.idCount--;
 
-		return instance;
+			throw err;
+		});
 	},
 
 	get(graph, type, id) {

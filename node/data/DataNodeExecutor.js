@@ -6,13 +6,12 @@ const NodeExecutor = require("../NodeExecutor");
 
 class DataNodeExecutor extends mixins(NodeExecutor) {
 	assign(preset, parentGraph) {
-		super.assign(preset, parentGraph);
+		const assigned = super.assign(preset, parentGraph);
 
-		Promise.all([this.api.data, this.graph.connected]).then(([data]) => {
-			this.ports.out.data.writable.write(data);
-		});
+		assigned.then(() => Promise.all([this.api.data, this.graph.connected]))
+			.then(([data]) => this.ports.out.data.writable.write(data));
 
-		return this;
+		return assigned;
 	}
 }
 

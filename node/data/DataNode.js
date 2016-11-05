@@ -28,16 +28,14 @@ class DataNode extends mixins(Node, UpdateEmitter(["data", "constraint"])) {
 	}
 
 	assign(preset, graphContainer) {
-		super.assign(preset, graphContainer);
+		return super.assign(preset, graphContainer).then(() => {
+			this[gotData] = false;
 
-		this[gotData] = false;
+			this.constraint = preset.constraint;
 
-		this.constraint = preset.constraint;
-
-		if(preset.data !== undefined)
-			this.data = preset.data;
-
-		return this;
+			if(preset.data !== undefined)
+				this.data = preset.data;
+		});
 	}
 
 	get ports() {

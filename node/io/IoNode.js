@@ -27,12 +27,10 @@ class IoNode extends mixins(Node, UpdateEmitter(["name", "constraint"])) {
 	}
 
 	assign(preset, graphContainer) {
-		super.assign(preset, graphContainer);
-
-		this.name = preset.name;
-		this.constraint = preset.constraint;
-
-		return this;
+		return super.assign(preset, graphContainer).then(() => {
+			this.name = preset.name;
+			this.constraint = preset.constraint;
+		});
 	}
 
 	get ports() {

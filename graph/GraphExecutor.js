@@ -20,14 +20,17 @@ class GraphExecutor {
 			const nodes = graph.nodes;
 			const edges = graph.edges;
 
-			Object.keys(nodes).forEach(nodeId => {
-				this.nodeMap.set(nodes[nodeId].id, node.createExecutor(nodes[nodeId], this));
-			});
+			return Promise.all(Object.keys(nodes).map(nodeId => {
+				return node.createExecutor(nodes[nodeId], this)
+					.then(executor => {
+						this.nodeMap.set(nodes[nodeId].id, executor);
 
-			return Promise.all(Object.keys(edges).map(edgeId => {
+						return executor.assigned;
+					});
+			})).then(() => Object.keys(edges).forEach(edgeId => {
 				const edge = edges[edgeId];
-				const fromNode = this.get(edge.from.node);
-				const toNode = this.get(edge.to.node);
+				const fromNode = this.getNode(edge.from.node);
+				const toNode = this.getNode(edge.to.node);
 
 				if(!fromNode)
 					throw new Error(`Could not find node ${edge.from.node}.`);
@@ -35,26 +38,24 @@ class GraphExecutor {
 				if(!toNode)
 					throw new Error(`Could not find node ${edge.to.node}.`);
 
-				return Promise.all([fromNode.loaded, toNode.loaded]).then(() => {
-					const source = fromNode.ports.out[edge.from.port];
+				const source = fromNode.ports.out[edge.from.port];
 
-					if(!source)
-						throw new Error(`Could not find port '${edge.from.port}' in node ${fromNode.id}.`);
+				if(!source)
+					throw new Error(`Could not find port '${edge.from.port}' in node ${fromNode.id}.`);
 
-					const target = toNode.ports.in[edge.to.port];
+				const target = toNode.ports.in[edge.to.port];
 
-					if(!target)
-						throw new Error(`Could not find port '${edge.to.port}' in node ${toNode.id}.`);
+				if(!target)
+					throw new Error(`Could not find port '${edge.to.port}' in node ${toNode.id}.`);
 
-					source.readable.pipe(target.writable);
-				});
+				source.readable.pipe(target.writable);
 			}));
 		});
 
 		owe(this);
 	}
 
-	get(id) {
+	getNode(id) {
 		return this.nodeMap.get(id);
 	}
 }
