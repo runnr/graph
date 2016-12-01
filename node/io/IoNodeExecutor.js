@@ -1,6 +1,6 @@
 "use strict";
 
-const { mixins } = require("mixwith");
+const { mixins } = require("@runnr/mixin");
 
 const NodeExecutor = require("../NodeExecutor");
 

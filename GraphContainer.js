@@ -1,6 +1,6 @@
 "use strict";
 
-const { mix, Mixin } = require("mixwith");
+const { mix, Mixin } = require("@runnr/mixin");
 
 const UpdateEmitter = require("../events/UpdateEmitter");
 const Persistable = require("../store/Persistable");

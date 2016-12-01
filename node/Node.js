@@ -1,9 +1,8 @@
 "use strict";
 
 const owe = require("owe.js");
-const { mix } = require("mixwith");
+const { mix, MixinFactory } = require("@runnr/mixin");
 
-const MixinFactory = require("../../helpers/MixinFactory");
 const Assignable = require("../../helpers/Assignable");
 const UpdateEmitter = require("../../events/UpdateEmitter");
 
