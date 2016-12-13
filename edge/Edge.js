@@ -3,8 +3,7 @@
 const owe = require("owe.js");
 
 const { mixins } = require("@runnr/mixin");
-
-const UpdateEmitter = require("../../events/UpdateEmitter");
+const { UpdateEmitter } = require("@runnr/events");
 
 const validateEdge = require("../helpers/validateEdge");
 

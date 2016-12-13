@@ -2,8 +2,8 @@
 
 const owe = require("owe.js");
 const { mixins } = require("@runnr/mixin");
+const { UpdateEmitter } = require("@runnr/events");
 
-const UpdateEmitter = require("../../events/UpdateEmitter");
 const Assignable = require("../../helpers/Assignable");
 const internalize = require("../../helpers/internalize");
 const stageManager = require("./stageManager");

@@ -1,8 +1,8 @@
 "use strict";
 
 const { mix, Mixin } = require("@runnr/mixin");
+const { UpdateEmitter } = require("@runnr/events");
 
-const UpdateEmitter = require("../events/UpdateEmitter");
 const Persistable = require("../store/Persistable");
 
 module.exports = Mixin(superclass => class GraphContainer extends mix(superclass).with(UpdateEmitter(["graph"])) {
