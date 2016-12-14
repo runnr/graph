@@ -1,8 +1,7 @@
 "use strict";
 
 const { mix, Mixin } = require("@runnr/mixin");
-
-const Assignable = require("../../helpers/Assignable");
+const { Assignable } = require("@runnr/helpers");
 
 const Port = require("./Port");
 

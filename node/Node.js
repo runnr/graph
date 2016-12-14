@@ -2,9 +2,8 @@
 
 const owe = require("owe.js");
 const { mix, MixinFactory } = require("@runnr/mixin");
+const { Assignable } = require("@runnr/helpers");
 const { UpdateEmitter } = require("@runnr/events");
-
-const Assignable = require("../../helpers/Assignable");
 
 const graph = Symbol("graph");
 

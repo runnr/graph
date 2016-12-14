@@ -2,9 +2,8 @@
 
 const owe = require("owe.js");
 const { mixins } = require("@runnr/mixin");
+const { internalize } = require("@runnr/helpers");
 const { UpdateEmitter } = require("@runnr/events");
-
-const internalize = require("../../../helpers/internalize");
 
 const Node = require("../Node")({
 	name: {

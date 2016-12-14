@@ -2,10 +2,9 @@
 
 const owe = require("owe.js");
 const { mixins } = require("@runnr/mixin");
+const { Assignable, internalize } = require("@runnr/helpers");
 const { UpdateEmitter } = require("@runnr/events");
 
-const Assignable = require("../../helpers/Assignable");
-const internalize = require("../../helpers/internalize");
 const stageManager = require("./stageManager");
 const node = require("../node");
 const edge = require("../edge");
