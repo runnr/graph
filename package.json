@@ -21,7 +21,9 @@
 		"owe-core": "0.11.x",
 		"owe.js": "0.11.x",
 
-		"mixwith": "runnr/mixwith.js"
+		"@runnr/mixin": "0.1.0",
+		"@runnr/helpers": "0.1.0",
+		"@runnr/events": "0.1.0"
 	},
 	"devDependencies": {
 		"eslint": "3.10.2",
