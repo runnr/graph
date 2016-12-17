@@ -1,6 +1,6 @@
 "use strict";
 
-const stageManager = require("../../managers/stageManager");
+const { stageManager } = require("@runnr/managers");
 
 module.exports = stageManager({
 	stages: ["nodes", "edges"],
