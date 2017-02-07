@@ -27,7 +27,7 @@
 		"@runnr/managers": "0.1.0"
 	},
 	"devDependencies": {
-		"eslint": "3.14.1",
+		"eslint": "3.15.0",
 		"eslint-config-cortys": "1.x"
 	}
 }
